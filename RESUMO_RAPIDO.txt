@@ -1,0 +1,362 @@
+================================================================================
+                    RESUMO RÁPIDO - GIT + LOAVABLE
+                   Comece em 5 Minutos
+================================================================================
+
+SEU REPOSITÓRIO GIT JÁ TEM:
+✅ lwp73-setproject.html  (aplicação)
+✅ LWP73_TECH.png         (logo)
+✅ NEXED_ECT_DOCUMENTACAO.txt (documentação)
+
+AGORA FALTA:
+1. Adicionar package.json
+2. Adicionar .gitignore  
+3. Adicionar README.md
+4. Fazer commit e push
+5. Conectar no Loavable
+
+================================================================================
+5 PASSOS PARA COMEÇAR
+================================================================================
+
+PASSO 1: ADICIONE ESSES ARQUIVOS AO SEU GIT
+─────────────────────────────────────────────
+
+Arquivo 1: package.json
+─────────────────────
+
+{
+  "name": "nexed-ect",
+  "version": "1.0.0",
+  "description": "NEXED.ect - Cronograma Inteligente",
+  "scripts": {
+    "start": "http-server -p 8000"
+  }
+}
+
+Arquivo 2: .gitignore
+──────────────────
+
+node_modules/
+.env
+.vercel/
+*.log
+
+Arquivo 3: README.md
+───────────────────
+
+# NEXED.ECT - Cronograma Inteligente
+
+## Credenciais
+- Email: spagolla@gmail.com
+- Senha: teste123
+
+## Desenvolvimento
+```
+npm install
+npm start
+```
+
+PASSO 2: COMMIT E PUSH
+──────────────────────
+
+git add .
+git commit -m "Setup inicial com package.json e config"
+git push origin main
+
+PASSO 3: ACESSE LOAVABLE
+─────────────────────────
+
+1. Vá a https://loavable.ai
+2. Clique "New Project"
+3. Escolha "Import from Git"
+4. Autorize seu GitHub
+5. Selecione repositório "nexed-ect"
+6. Aguarde build (2-5 min)
+
+PASSO 4: TESTE PREVIEW
+──────────────────────
+
+1. Loavable fornece URL tipo:
+   https://nexed-ect.loavable.app
+
+2. Abra a URL e teste:
+   ✅ Logo aparece?
+   ✅ Auto-login funciona?
+   ✅ Menus aparecem?
+   ✅ Sem erros no console (F12)?
+
+PASSO 5: VOCÊ ESTÁ PRONTO!
+──────────────────────────
+
+Agora o fluxo é simples:
+
+1. Edita HTML localmente
+2. git push
+3. Loavable auto-deploya em segundos
+4. Testa na preview URL
+
+================================================================================
+ESTRUTURA DO PROJETO APÓS SETUP
+================================================================================
+
+nexed-ect/  (seu repositório Git)
+├── lwp73-setproject.html              ← Aplicação principal
+├── LWP73_TECH.png                      ← Logo
+├── NEXED_ECT_DOCUMENTACAO.txt         ← Documentação completa
+├── GUIA_GIT_LOAVABLE_INTEGRACAO.txt  ← Guia detalhado (este arquivo)
+├── RESUMO_RAPIDO.txt                  ← Este arquivo
+├── package.json                        ← Config npm
+├── .gitignore                          ← O que não commitar
+└── README.md                           ← Instruções do projeto
+
+================================================================================
+COMO USAR CADA ARQUIVO
+================================================================================
+
+📄 lwp73-setproject.html
+─────────────────────────
+O QUÊ: Arquivo HTML/JavaScript principal da aplicação
+EDITAR EM: VSCode, qualquer editor de texto
+QUANDO EDITAR: Para adicionar funcionalidades, alterar UI, mudar dados
+APÓS EDITAR: git add . → git commit → git push
+
+📄 NEXED_ECT_DOCUMENTACAO.txt
+─────────────────────────────
+O QUÊ: Documentação técnica completa do projeto
+LEIA EM: Qualquer editor de texto (ou notepad)
+QUANDO LER: Para entender arquitetura, estrutura de dados, fluxos
+QUANDO ATUALIZAR: Após adicionar nova funcionalidade
+APÓS ATUALIZAR: git commit e push junto com mudanças do HTML
+
+📄 GUIA_GIT_LOAVABLE_INTEGRACAO.txt
+───────────────────────────────────
+O QUÊ: Guia passo-a-passo de como usar Git + Loavable
+LEIA EM: Qualquer editor de texto
+QUANDO LER: Quando tiver dúvida de como fazer algo
+CONTÉM: Troubleshooting, fluxos, comandos, melhores práticas
+
+📄 RESUMO_RAPIDO.txt
+────────────────────
+O QUÊ: Versão curta do guia (este arquivo)
+LEIA EM: Qualquer editor de texto
+QUANDO LER: Para lembrar dos passos principais
+
+================================================================================
+FLUXO DO DIA A DIA
+================================================================================
+
+MANHÃ: Você tem tarefa "Adicionar novo menu"
+────────────────────────────────────────────
+
+1. Abre VSCode
+2. Edita lwp73-setproject.html
+3. Adiciona novo menu em JavaScript
+4. Edita CSS para estilo
+5. Salva arquivo
+6. npm start (testa no navegador)
+7. Verifica se tudo funciona
+
+TARDE: Você fez mudanças, quer deployer
+──────────────────────────────────────
+
+1. git status (vê mudanças)
+2. git add .
+3. git commit -m "feat: Novo menu de Integrações"
+4. git push origin main
+
+5 SEGUNDOS DEPOIS:
+5. Loavable automaticamente:
+   - Detecta novo push
+   - Faz rebuild
+   - Deploya em https://nexed-ect.loavable.app
+
+6. Você testa em tempo real na URL
+
+DOCUMENTAÇÃO: Se fez mudança relevante
+───────────────────────────────────────
+
+1. Abre NEXED_ECT_DOCUMENTACAO.txt
+2. Navega até seção relevante
+3. Adiciona informação sobre novo menu
+4. Salva
+5. git commit -m "docs: Documentar novo menu de Integrações"
+6. git push
+
+================================================================================
+COMANDOS ESSENCIAIS QUE VOCÊ VAI USAR
+================================================================================
+
+Testar Localmente:
+  npm install
+  npm start
+  → Abre http://localhost:8000
+
+Commitar Mudança:
+  git add .
+  git commit -m "sua mensagem aqui"
+  git push origin main
+
+Ver Histórico:
+  git log
+
+Voltar para versão anterior:
+  git revert <hash-do-commit>
+
+Criar branch (para trabalhar isolado):
+  git checkout -b nome-da-feature
+  git push origin nome-da-feature
+
+================================================================================
+ONDE CADA ARQUIVO FICA
+================================================================================
+
+NO SEU COMPUTADOR (Pasta Local):
+┌─────────────────────────────┐
+│ nexed-ect/                  │
+│ ├── lwp73-setproject.html   │ ← Edita aqui
+│ ├── NEXED_ECT_DOCUMENTACAO  │ ← Atualiza aqui
+│ └── package.json            │ ← Deixa como está
+└─────────────────────────────┘
+
+NO GITHUB/GIT:
+┌─────────────────────────────┐
+│ seu-usuario/nexed-ect       │
+│ ├── lwp73-setproject.html   │ ← Você faz push aqui
+│ ├── NEXED_ECT_DOCUMENTACAO  │ ← Fica sincronizado
+│ └── package.json            │ ← Sincronizado
+└─────────────────────────────┘
+
+NO LOAVABLE (Cloud):
+┌─────────────────────────────┐
+│ https://nexed-ect.loavable  │
+│ (app rodando em tempo real)  │
+│                              │
+│ Atualiza automaticamente     │
+│ quando você faz push no Git  │
+└─────────────────────────────┘
+
+================================================================================
+FLUXO VISUAL COMPLETO
+================================================================================
+
+         ┌─────────────────┐
+         │   VSCode (seu   │
+         │   computador)   │
+         │   Edita HTML    │
+         │   npm start     │
+         └────────┬────────┘
+                  │ testa localmente
+                  ▼
+         ┌─────────────────┐
+         │  Git (local)    │
+         │  git add/commit │
+         │  git push       │
+         └────────┬────────┘
+                  │ 
+                  ▼
+         ┌─────────────────┐
+         │  GitHub/GitLab  │
+         │  (seu repo)     │
+         │  código está lá │
+         └────────┬────────┘
+                  │ webhook notifica
+                  ▼
+         ┌─────────────────┐
+         │   LOAVABLE      │
+         │   ├─ Pull code  │
+         │   ├─ Build      │
+         │   ├─ Deploy     │
+         │   └─ Pronto!    │
+         └────────┬────────┘
+                  │
+                  ▼
+         ┌─────────────────┐
+         │ Preview URL     │
+         │ (seu app live)  │
+         │ Testa em tempo  │
+         │ real            │
+         └─────────────────┘
+
+================================================================================
+PERGUNTAS & RESPOSTAS RÁPIDAS
+================================================================================
+
+P: Por quanto tempo Loavable leva para deployer?
+R: 30-60 segundos após você fazer git push
+
+P: Minha senha hardcoded é problema?
+R: Para desenvolvimento não. Para produção, use variáveis de ambiente.
+
+P: Posso editar no Loavable direto?
+R: Sim, mas não salva no Git. Edite localmente e faça push.
+
+P: Como voltar se algo quebrou?
+R: git revert <commit-hash> e push
+
+P: Pode ter múltiplas pessoas desenvolvendo?
+R: Sim! Cada pessoa faz clone, cria branch, e faz PR.
+
+P: Como atualizar documentação?
+R: Edite NEXED_ECT_DOCUMENTACAO.txt, commit e push junto.
+
+P: Preciso de servidor? Banco de dados?
+R: Para MVP não. HTML puro + localStorage funciona. Depois integre Supabase.
+
+================================================================================
+CHECKLIST: VOCÊ CONSEGUIU TUDO?
+================================================================================
+
+Antes de considerar "pronto":
+
+□ package.json criado e no git
+□ .gitignore criado e no git
+□ README.md criado e no git
+□ Primeiro push feito
+□ Conta Loavable criada
+□ Repositório conectado no Loavable
+□ Preview URL funcionando
+□ Testou: Logo aparece
+□ Testou: Auto-login funciona
+□ Testou: Menu INÍCIO abre
+□ Testou: Menu LEGO abre
+□ Testou: Nenhum erro no console (F12)
+
+Se tudo ✅, você está 100% pronto!
+
+================================================================================
+PRÓXIMO PASSO
+================================================================================
+
+Agora você pode:
+
+1. ✅ DESENVOLVER
+   - Edite HTML
+   - git push
+   - Vê mudanças ao vivo em segundos
+
+2. ✅ COLABORAR
+   - Seus colegas fazem clone
+   - Cada um trabalha em branch
+   - Merge e deploy automático
+
+3. ✅ DOCUMENTAR
+   - Mantenha NEXED_ECT_DOCUMENTACAO.txt atualizado
+   - Sempre sincronizado no git
+   - Disponível para referência
+
+4. ✅ EVOLUIR
+   - Adicione testes
+   - Integre com Supabase
+   - Crie mobile app
+   - Deploy para produção
+
+================================================================================
+
+Dúvidas? Leia:
+- GUIA_GIT_LOAVABLE_INTEGRACAO.txt (detalhado)
+- NEXED_ECT_DOCUMENTACAO.txt (arquitetura)
+
+Sucesso! 🚀
+
+================================================================================

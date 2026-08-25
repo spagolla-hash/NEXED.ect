@@ -1,0 +1,871 @@
+================================================================================
+                    NEXED.ECT - DOCUMENTAÇÃO COMPLETA
+                  Cronograma Inteligente de Projetos
+================================================================================
+
+DATA DE CRIAÇÃO: 24/08/2026
+VERSÃO: 1.0
+STATUS: Produção
+
+================================================================================
+1. VISÃO GERAL DO PROJETO
+================================================================================
+
+Nome: NEXED.ECT
+Subtítulo: Cronograma Inteligente
+Descrição: Sistema inteligente de gestão de projetos e cronogramas baseado em 
+           pessoas, sprints, histórias e subtarefas.
+
+Funcionalidades Principais:
+- Gestão de profissionais e seus apontamentos
+- Gestão de projetos e clientes
+- Planejamento de sprints com histórias (user stories)
+- Quebra de histórias em subtarefas
+- Grade de cronograma inteligente (LEGO - Plano de Turno)
+- Dashboard com métricas
+- Gestão de perfis de acesso
+
+Usuário Padrão para Login:
+- Email: spagolla@gmail.com
+- Senha: teste123
+- Perfil: Administrador
+
+================================================================================
+2. ESTRUTURA DE DADOS (BANCO DE DADOS)
+================================================================================
+
+O projeto utiliza um banco de dados em memória (localStorage) com os seguintes 
+objetos principais:
+
+2.1 PROFISSIONAIS (DB.profissionais)
+─────────────────────────────────────
+Propriedades:
+- id: string identificador único (ex: 'p1', 'p2', 'p-paulo')
+- nome: string com nome completo
+- tecnologia_principal: string (ex: 'Backend Lead', 'Frontend', 'QA')
+- email: string com email
+- senha: string com senha (em produção usar hashing)
+- perfil_acesso: string ('administrador', 'gestor', 'desenvolvedor', 'qa')
+- anotacoes: array de objetos com histórico de atividades
+
+Exemplo:
+{
+  id: 'p-paulo',
+  nome: 'Paulo Spagolla',
+  tecnologia_principal: 'Administrador',
+  email: 'spagolla@gmail.com',
+  senha: 'teste123',
+  perfil_acesso: 'administrador'
+}
+
+2.2 CLIENTES (DB.clientes)
+──────────────────────────
+Propriedades:
+- id: string (ex: 'cli-pp2', 'cli-san')
+- nome: string com nome do cliente
+- contato: string com informações de contato
+
+Clientes Atuais:
+1. Cliente Teste .Ponto (id: cli-pp2)
+2. Cliente Teste Gold (id: cli-san)
+3. Cliente Teste (id: cli-teste)
+
+2.3 PROJETOS (DB.projetos)
+──────────────────────────
+Propriedades:
+- id: string (ex: 'proj-pp2')
+- nome: string nome do projeto (sigla)
+- cliente_id: referência ao cliente
+- cor_hex: string com cor em hexadecimal para UI
+- sigla: string curta (ex: 'CP', 'God', 'TST')
+- status: string ('ativo', 'pausado', 'concluido')
+- equipe: array com profissionais e seus papéis no projeto
+  - profissional_id: referência ao profissional
+  - perfil: string descrevendo o papel (ex: 'Backend Lead')
+  - alocacao_pct: número 0-100 (% de dedicação, opcional)
+
+Projetos Atuais:
+1. CP (Cliente Teste .Ponto)
+   - Sigla: CP
+   - Status: ativo
+   
+2. God (Cliente Teste Gold)
+   - Sigla: God
+   - Status: ativo
+   
+3. Teste (Cliente Teste)
+   - Sigla: TST
+   - Status: ativo
+   - Projeto de validação 100% dedicado
+
+2.4 SPRINTS (DB.sprints)
+─────────────────────────
+Propriedades:
+- id: string (ex: 'sp-pp2-sprint-1')
+- nome: string (ex: 'CP Sprint 1')
+- duracao_semanas: número
+- projeto_id: referência ao projeto
+- status: string ('planejada', 'em_andamento', 'concluida')
+- objetivo: string descrevendo o objetivo da sprint
+
+Sprints Atuais:
+- CP Sprint 1, 2, 3 (projeto CP)
+- God Sprint 0 (projeto God)
+- Teste Sprint 1, 2, 3 (projeto Teste)
+
+2.5 HISTÓRIAS (DB.historias)
+────────────────────────────
+Propriedades:
+- id: string (ex: 'PP2-1', 'TST-1')
+- titulo: string descritivo
+- projeto_id: referência ao projeto
+- sprint_id: referência à sprint
+- cor_hex: string cor para visualização
+- status: 'planejada', 'em_progresso', 'em_review', 'concluida' (calculado)
+
+Exemplo:
+{
+  id: 'CP-5',
+  titulo: '[US-02] Remoção de Marcações com Borracha',
+  projeto_id: 'proj-pp2',
+  sprint_id: 'sp-pp2-sprint-1',
+  cor_hex: '#E3ABAB'
+}
+
+2.6 SUBTAREFAS (DB.subtarefas)
+──────────────────────────────
+Propriedades:
+- id: string (ex: 'PP2-1.T1', 'CP-1.T2')
+- historia_id: referência à história
+- projeto_id: referência ao projeto
+- sprint_id: referência à sprint
+- titulo: string descritivo da subtarefa
+- responsavel_id: profissional responsável
+- tipo: 'Code', 'Test', 'Review', 'Design' etc
+- status: 'planejada', 'progresso', 'bloqueada', 'concluida'
+- progresso_pct: 0-100
+- depende_de_ids: array de IDs de subtarefas que são pré-requisito
+- turno_estimado: 'manha', 'tarde', 'noite'
+- data_inicio_real: data (se começou)
+- duracao_turnos: quantos turnos leva para completar
+- pausada_motivo: motivo da pausa (se aplicável)
+
+Exemplo:
+{
+  id: 'CP-1.T1',
+  historia_id: 'CP-5',
+  projeto_id: 'proj-pp2',
+  sprint_id: 'sp-pp2-sprint-1',
+  titulo: 'Implementar função de borracha',
+  responsavel_id: 'p1',
+  tipo: 'Code',
+  status: 'progresso',
+  progresso_pct: 75,
+  depende_de_ids: [],
+  turno_estimado: 'manha',
+  duracao_turnos: 2
+}
+
+2.7 GRADE DE CRONOGRAMA (DB.grade)
+───────────────────────────────────
+Propriedades:
+- Organizada por: Data, Turno (Manhã/Tarde/Noite), Profissional
+- Cada entrada marca qual subtarefa está agendada para quando/quem
+- Permite visualizar capacidade de cada profissional
+- Identifica conflitos e sobrecargas
+
+================================================================================
+3. MENUS E FUNCIONALIDADES
+================================================================================
+
+3.1 MENU INÍCIO (Dashboard)
+───────────────────────────
+Localização: Primeira aba ao fazer login
+Função: Dashboard de resumo com métricas principais
+
+Informações Exibidas:
+- Total de projetos ativos
+- Total de profissionais
+- Histórias em progresso
+- Subtarefas bloqueadas
+- Taxa de conclusão da sprint atual
+
+Interações:
+- Visualizar cards com resumo por projeto
+- Acessar histórias "em progresso" rapidamente
+- Ver próximas tarefas do time
+
+3.2 MENU LEGO (Plano de Turno - Cronograma)
+─────────────────────────────────────────────
+Localização: Segunda aba
+Função: Visualização inteligente do cronograma em grade
+
+Estrutura:
+- Eixo Y: Profissionais da empresa
+- Eixo X: Dias e Turnos (Manhã/Tarde/Noite)
+- Células: Subtarefas agendadas
+
+Cores Utilizadas:
+- Verde: Subtarefa concluída
+- Azul: Em progresso (70-99% pronto)
+- Amarelo: Iniciada (1-69% pronto)
+- Vermelho: Bloqueada
+
+Funcionalidades:
+- Visualizar todos os agendamentos da semana/mês
+- Identificar sobrecargas e gargalos
+- Ver status de cada subtarefa pelo círculo de status
+- Tooltip ao passar mouse: ID, Título, Números de Subtarefas da História, Status
+
+Ação ao Clicar em um Quadro:
+→ Redireciona para PROJETOS
+→ Abre a Sprint automaticamente
+→ Expande a História com suas Subtarefas
+
+3.3 MENU PROJETOS
+──────────────────
+Localização: Terceira aba
+Função: Gestão de projetos e sprints
+
+Estrutura:
+1. Seletor de Projeto (dropdown lista de projetos)
+2. Abas Internas:
+   - SPRINTS: Visualização das histórias agrupadas por sprint
+   - BACKLOG: Histórias não planejadas para nenhuma sprint
+   - CONFIGURAÇÕES: Editar dados do projeto
+
+Na Aba SPRINTS:
+- Cada sprint é exibida em um card expansível
+- Ao expandir, mostra:
+  - Lista de histórias da sprint
+  - Status de cada história
+  - Número de subtarefas por história
+  
+Ao Clicar em uma História:
+- Expande mostrando todas as suas subtarefas
+- Permite editar/criar subtarefas
+- Mostra responsáveis, status e progresso
+
+Ações Disponíveis:
+- Criar nova história
+- Editar história
+- Deletar história (se não tiver subtarefas)
+- Criar subtarefa
+- Editar subtarefa
+- Reordenar histórias
+
+3.4 MENU MINHA ÁREA (Kanban Pessoal)
+─────────────────────────────────────
+Localização: Quarta aba
+Função: Visualização Kanban das tarefas do usuário logado
+
+Colunas:
+1. Aguardando: Subtarefas planejadas, não iniciadas
+2. Desenvolvimento: Em progresso
+3. Code Review: Aguardando revisão
+4. Testing: Em testes
+5. Concluído: Finalizadas
+
+Funcionalidades:
+- Arrastar e soltar subtarefas entre colunas
+- Filtrar por projeto
+- Ver detalhes da subtarefa
+- Atualizar progresso (%)
+- Marcar como bloqueada com motivo
+
+3.5 MENU CLIENTES
+──────────────────
+Localização: Quinta aba
+Função: CRUD de clientes e suas informações
+
+Dados Gerenciáveis:
+- Nome do cliente
+- Contato
+- Projetos associados
+- Histórico de atividades
+
+Ações:
+- Visualizar todos os clientes
+- Criar novo cliente
+- Editar informações
+- Deletar cliente (se não tiver projetos)
+- Ver projetos do cliente
+
+3.6 MENU CADASTRO
+──────────────────
+Localização: Sexta aba
+Função: Cadastro de profissionais e gestão de projetos
+
+Submenus:
+1. Cadastro de Profissionais
+   - CRUD de profissionais
+   - Nome, Email, Senha, Tecnologia Principal, Perfil de Acesso
+   - Visualizar anotações (histórico)
+
+2. Cadastro de Projetos
+   - CRUD de projetos
+   - Nome, Cliente, Sigla, Cor, Status
+   - Gerenciar equipe do projeto
+   - Adicionar/remover profissionais
+
+3. Cadastro de Sprints
+   - CRUD de sprints
+   - Nome, Duração (semanas), Projeto, Status, Objetivo
+
+4. Cadastro de Histórias
+   - CRUD de histórias
+   - ID, Título, Projeto, Sprint
+   - Cor para visualização
+
+5. Cadastro de Subtarefas
+   - CRUD de subtarefas
+   - Todos os campos detalhados
+   - Gerenciar dependências
+
+3.7 MENU PERFIS
+────────────────
+Localização: Sétima aba
+Função: Gestão de perfis de acesso e permissões
+
+Perfis Disponíveis:
+1. Administrador: Acesso completo a todos os menus
+2. Gestor: Acesso a PROJETOS, CLIENTES, PERFIS (sem CADASTRO)
+3. Desenvolvedor: Acesso a LEGO, MINHA ÁREA, PROJETOS (leitura)
+4. QA: Acesso a MINHA ÁREA, PROJETOS (leitura)
+
+Funcionalidades:
+- Visualizar perfis disponíveis
+- Ver permissões de cada perfil
+- Editar permissões
+- Criar novo perfil customizado
+- Atribuir perfil a profissionais
+
+================================================================================
+4. REGRAS DE NEGÓCIO
+================================================================================
+
+4.1 REGRAS DE STATUS
+────────────────────
+
+Histórias:
+- Planejada: Criada, na sprint, nenhuma subtarefa iniciada
+- Em Progresso: Pelo menos 1 subtarefa iniciada
+- Em Review: Todas as subtarefas em review ou concluídas
+- Concluída: Todas as subtarefas concluídas
+
+Subtarefas:
+- Planejada: Criada, não iniciada
+- Em Progresso: 1-99% de progresso (0 < prog < 100)
+- Bloqueada: Aguardando dependência ou bloqueada por outro motivo
+- Concluída: 100% de progresso
+
+Sprints:
+- Planejada: Criada, data de início no futuro
+- Em Andamento: Data atual está dentro da duração
+- Concluída: Data de término passou
+
+4.2 REGRAS DE DEPENDÊNCIAS
+───────────────────────────
+
+- Uma subtarefa pode depender de outras subtarefas
+- Se uma subtarefa depende de outra não concluída, fica bloqueada automaticamente
+- Não é permitido criar dependência cíclica (A → B → A)
+- Ao desbloquear uma subtarefa, suas dependentes podem ser desbloqueadas
+
+4.3 REGRAS DE ALOCAÇÃO
+──────────────────────
+
+- Um profissional pode ser alocado em múltiplos projetos
+- Cada projeto tem um % de dedicação recomendado (100% total ideal)
+- Alocação é controlada via perfil na equipe do projeto
+- Sistema avisa se profissional está sobrecarregado (>100%)
+
+4.4 REGRAS DE CRONOGRAMA (LEGO)
+────────────────────────────────
+
+- Cada profissional tem 3 turnos/dia: Manhã, Tarde, Noite
+- Cada subtarefa é agendada para um turno específico
+- Uma célula (prof + dia + turno) só pode ter 1 subtarefa
+- Pode haver múltiplas subtarefas do mesmo responsável em dias diferentes
+- Sistema impede agendar subtarefa bloqueada
+
+4.5 REGRAS DE PROGRESSO
+───────────────────────
+
+- Progresso é manual (entrada do usuário)
+- Quando subtarefa atinge 100%, transita para status apropriado
+- Histórias calculam progresso como média de suas subtarefas
+- Dashboard mostra progresso em tempo real
+
+4.6 REGRAS DE ACESSO
+────────────────────
+
+- Perfil Administrador: Acesso a TUDO
+- Perfil Gestor: Sem acesso a CADASTRO (não pode criar/editar profissionais)
+- Perfil Desenvolvedor: Leitura em PROJETOS, acesso total em MINHA ÁREA
+- Perfil QA: Igual desenvolvedor com ênfase em testes
+
+- Cada usuário só vê suas tarefas em MINHA ÁREA (exceto gestor/admin)
+- Admin pode ver histórico completo de todas anotações
+
+================================================================================
+5. FLUXOS DE TRABALHO
+================================================================================
+
+5.1 FLUXO DE CRIAÇÃO DE PROJETO
+────────────────────────────────
+
+1. Admin vai a CADASTRO → Cadastro de Projetos
+2. Clica em "+ Novo Projeto"
+3. Preenche:
+   - Nome (sigla)
+   - Cliente (select)
+   - Cor (hexadecimal ou picker)
+   - Status (ativo/pausado)
+4. Confirma criação
+5. Sistema cria ID automático (proj-xxx)
+6. Pode adicionar profissionais à equipe imediatamente
+
+5.2 FLUXO DE CRIAÇÃO DE SPRINT
+───────────────────────────────
+
+1. Vai a CADASTRO → Cadastro de Sprints
+2. Clica em "+ Nova Sprint"
+3. Preenche:
+   - Nome (ex: "CP Sprint 4")
+   - Projeto (select)
+   - Duração em semanas (ex: 2)
+   - Objetivo (descrição)
+4. Data de início é a data de criação
+5. Sistema calcula data de término: inicio + (duracao_semanas * 7)
+6. Status muda automaticamente conforme data
+
+5.3 FLUXO DE CRIAÇÃO DE HISTÓRIA
+─────────────────────────────────
+
+1. Vai a PROJETOS → Seleciona Projeto → Aba SPRINTS
+2. Expande uma Sprint
+3. Clica em "+ Nova História"
+4. Preenche:
+   - ID (auto-gerado ou manual)
+   - Título (ex: "[US-01] Cadastro de Usuário")
+   - Cor (auto-gerada aleatória ou escolhida)
+5. Confirma
+6. História criada em status "planejada"
+7. Agora pode adicionar subtarefas
+
+5.4 FLUXO DE CRIAÇÃO DE SUBTAREFA
+──────────────────────────────────
+
+1. Va a PROJETOS → Seleciona Projeto → SPRINTS
+2. Expande Sprint → Expande História
+3. Clica em "+ Nova Subtarefa"
+4. Preenche:
+   - Título (ex: "Implementar endpoint de login")
+   - Responsável (select de profissionais)
+   - Tipo (Code/Test/Design/Review)
+   - Turno estimado (manha/tarde/noite)
+   - Duração em turnos (1, 2, 3...)
+   - Dependências (if any)
+5. Confirma
+6. Subtarefa criada em status "planejada"
+
+5.5 FLUXO DE AGENDAR NO CRONOGRAMA
+──────────────────────────────────
+
+1. Vai ao menu LEGO
+2. Procura célula vazia (prof + dia + turno)
+3. Clica na célula
+4. Sistema abre modal com:
+   - Subtarefas disponíveis para agendar daquele profissional
+   - Que não estão bloqueadas
+   - Que cabem no turno/duração
+5. Seleciona subtarefa
+6. Sistema marca a(s) célula(s) com a subtarefa
+7. Subtarefa transita para status "em progresso"
+
+5.6 FLUXO DE ATUALIZAR PROGRESSO
+──────────────────────────────────
+
+1. Usuário vai a MINHA ÁREA (Kanban)
+2. Clica em uma subtarefa
+3. Abre modal de detalhes
+4. Atualiza "Progresso %" (0-100)
+5. Clica em Atualizar
+6. Sistema recalcula:
+   - Status da subtarefa (baseado em %)
+   - Status da história (média das subtarefas)
+   - Progresso visível em tempo real
+
+5.7 FLUXO DE BLOQUEAR/DESBLOQUEAR
+──────────────────────────────────
+
+Para Bloquear:
+1. Vai a MINHA ÁREA ou PROJETOS
+2. Clica em subtarefa
+3. Seleciona "Marcar como Bloqueada"
+4. Insere motivo (ex: "Aguardando aprovação do design")
+5. Confirma
+6. Subtarefa fica com status "bloqueada" (ícone de cadeado)
+
+Para Desbloquear:
+1. Mesmo local
+2. Clica "Desbloquear"
+3. Sistema verifica dependências
+4. Se OK, muda status para último (em progresso/planejada)
+
+5.8 FLUXO DE NAVEGAR DO LEGO PARA PROJETOS
+─────────────────────────────────────────────
+
+1. Usuário está no menu LEGO
+2. Clica em qualquer quadro (subtarefa agendada)
+3. Sistema:
+   - Muda para menu PROJETOS
+   - Seleciona automaticamente o Projeto correto
+   - Abre aba SPRINTS
+   - Expande a Sprint automaticamente
+   - Expande a História automaticamente
+4. Usuário vê todas as subtarefas da história abiertas
+
+================================================================================
+6. INSTRUÇÕES PARA REPRODUZIR EM LOAVABLE
+================================================================================
+
+Loavable é uma plataforma de desenvolvimento low-code/no-code que permite 
+construir aplicações rapidamente. Aqui está o passo a passo para implementar 
+NEXED.ECT:
+
+6.1 CONFIGURAÇÃO INICIAL
+─────────────────────────
+
+1. Acesse https://loavable.ai (ou seu domínio)
+2. Crie novo projeto: "NEXED ECT"
+3. Escolha template: "Blank Application" ou "React App"
+4. Selecione database: "Local Storage" ou "Supabase" (para produção)
+
+6.2 ESTRUTURA DE BANCO DE DADOS
+────────────────────────────────
+
+Crie as seguintes tabelas/coleções:
+
+Tabela: profissionais
+Campos:
+- id (text, primary key)
+- nome (text)
+- tecnologia_principal (text)
+- email (text, unique)
+- senha (text)
+- perfil_acesso (text, enum: admin/gestor/dev/qa)
+- anotacoes (array)
+
+Tabela: clientes
+Campos:
+- id (text, primary key)
+- nome (text)
+- contato (text)
+
+Tabela: projetos
+Campos:
+- id (text, primary key)
+- nome (text)
+- cliente_id (foreign key → clientes)
+- cor_hex (text)
+- sigla (text)
+- status (enum: ativo/pausado/concluido)
+- equipe (array of objects com profissional_id, perfil, alocacao_pct)
+
+Tabela: sprints
+Campos:
+- id (text, primary key)
+- nome (text)
+- duracao_semanas (number)
+- projeto_id (foreign key → projetos)
+- status (enum: planejada/em_andamento/concluida)
+- objetivo (text)
+- data_inicio (date)
+- data_fim (date)
+
+Tabela: historias
+Campos:
+- id (text, primary key)
+- titulo (text)
+- projeto_id (foreign key → projetos)
+- sprint_id (foreign key → sprints)
+- cor_hex (text)
+
+Tabela: subtarefas
+Campos:
+- id (text, primary key)
+- historia_id (foreign key → historias)
+- projeto_id (foreign key → projetos)
+- sprint_id (foreign key → sprints)
+- titulo (text)
+- responsavel_id (foreign key → profissionais)
+- tipo (enum: Code/Test/Design/Review)
+- status (enum: planejada/progresso/bloqueada/concluida)
+- progresso_pct (number 0-100)
+- depende_de_ids (array)
+- turno_estimado (enum: manha/tarde/noite)
+- duracao_turnos (number)
+- pausada_motivo (text)
+- data_inicio_real (date)
+
+Tabela: grade_cronograma
+Campos:
+- id (text, primary key)
+- data (date)
+- turno (enum: manha/tarde/noite)
+- profissional_id (foreign key)
+- subtarefa_id (foreign key → subtarefas)
+
+6.3 COMPONENTES A CRIAR
+────────────────────────
+
+Navegação Principal:
+- Component: MainNavigation
+- Props: currentUser, onTabChange
+- Rendereiza 7 botões: INÍCIO, LEGO, PROJETOS, MINHA ÁREA, CLIENTES, CADASTRO, PERFIS
+
+Login:
+- Component: LoginForm
+- Props: onLoginSuccess
+- Campos: Email (pré-preenchido), Senha (pré-preenchida)
+- Auto-login ao carregar
+
+Dashboard (INÍCIO):
+- Component: Dashboard
+- Exibe cards com: Total de Projetos, Histórias em Progresso, Bloqueadas
+- Lista histórias ativas
+
+Cronograma LEGO:
+- Component: GradeLegoSchedule
+- Dimensões: Profissionais (Y) × Dias/Turnos (X)
+- Cores por status
+- Interativo: clique abre história
+
+Projetos:
+- Component: ProjetosArea
+- Submenus: SPRINTS, BACKLOG, CONFIGURAÇÕES
+- Expansível accordion para sprints e histórias
+- Modais para CRUD
+
+Kanban (Minha Área):
+- Component: KanbanBoard
+- 5 colunas: Aguardando, Desenvolvimento, Review, Testing, Concluído
+- Drag & drop entre colunas
+- Modal ao clicar
+
+Clientes:
+- Component: ClientesArea
+- Tabela listando clientes
+- Botões CRUD
+- Modal para criar/editar
+
+Cadastro:
+- Component: CadastroArea
+- Submenus: Profissionais, Projetos, Sprints, Histórias, Subtarefas
+- Tabelas tabulares com CRUDs
+- Modais para formulários
+
+Perfis:
+- Component: PerfisArea
+- Lista perfis com permissões
+- Edit form para customizar
+
+6.4 LÓGICA DE NEGÓCIO A IMPLEMENTAR
+───────────────────────────────────
+
+Funções Essenciais:
+
+1. getHistoria(id): Retorna história pelo ID
+2. getSubtarefa(id): Retorna subtarefa pelo ID
+3. getProfissional(id): Retorna profissional pelo ID
+4. getProjetoPorSubtarefa(subtarefaId): Encontra projeto da subtarefa
+5. calcularStatusHistoria(historiaId): Calcula status baseado nas subtarefas
+6. isSubtarefaBloqueada(subtarefaId): Verifica se há dependência não concluída
+7. isSubtarefaBloqueada(subtarefaId): Verifica se há dependência não concluída
+8. handleCellClick(subtarefaId): Navega para PROJETOS com história aberta
+9. agendar(subtarefaId, profId, data, turno): Agenda subtarefa
+10. atualizarProgresso(subtarefaId, percentual): Atualiza % e calcula status
+
+Autenticação:
+1. Auto-login ao carregar com spagolla@gmail.com
+2. Validar email/senha contra DB
+3. Armazenar usuário atual em estado global
+4. Verificar perfil de acesso para mostrar/ocultar menus
+
+Cálculos:
+1. Status história = MAX(status das subtarefas)
+2. Progresso história = AVG(progresso % das subtarefas)
+3. Sprint em_andamento se hoje está entre data_inicio e data_fim
+4. Cor células LEGO conforme status
+
+6.5 INSTRUÇÕES DE DEPLOY
+─────────────────────────
+
+1. No Loavable, clique em "Deploy"
+2. Escolha destino: Vercel, Netlify ou Loavable Cloud
+3. Configure variáveis de ambiente (se houver)
+4. Clique em "Deploy Now"
+5. Aguarde build (2-5 minutos)
+6. Teste em URL fornecida
+
+Para desenvolvimento local:
+1. Clone o repositório Loavable
+2. npm install
+3. npm start
+4. Acesse http://localhost:3000
+
+6.6 INTEGRAÇÃO COM SUPABASE (PRODUÇÃO)
+───────────────────────────────────────
+
+Se usar Supabase ao invés de Local Storage:
+
+1. Crie conta em https://supabase.com
+2. Novo projeto
+3. Crie tabelas conforme seção 6.2
+4. Na aplicação Loavable, configure conexão:
+   - URL Supabase
+   - Chave de API anon
+   - Chave de API service (backend only)
+5. Implemente RLS (Row Level Security) para segurança:
+   - Profissional só vê seus próprios dados em MINHA ÁREA
+   - Admin vê tudo
+6. Configure autenticação Supabase Auth ao invés de login manual
+
+================================================================================
+7. DADOS DE EXEMPLO (SEED)
+================================================================================
+
+Para popular o banco com dados de teste:
+
+Profissionais:
+1. Paulo Spagolla (admin)
+2. Desenvolvedor 1-13 com diferentes tecnologias
+3. QA 1-2
+4. Product Manager/Designer
+
+Clientes:
+1. Cliente Teste .Ponto
+2. Cliente Teste Gold
+3. Cliente Teste
+
+Projetos:
+1. CP (Cliente Teste .Ponto) - 3 sprints
+2. God (Cliente Teste Gold) - 1 sprint
+3. TST (Cliente Teste) - 3 sprints de validação
+
+Sprints (total 7):
+- Cada uma com 6-18 histórias
+- Histórias em diferentes status
+- Subtarefas com dependências
+
+Histórias: ~50 no total
+Subtarefas: ~150 no total
+
+Grade Cronograma:
+- Agendadas para próximas 2 semanas
+- Alguns profissionais sobrecarregados
+- Algumas bloqueadas por dependências
+
+================================================================================
+8. TESTES RECOMENDADOS
+================================================================================
+
+8.1 Testes Funcionais
+─────────────────────
+
+Login:
+- [ ] Login automático ao carregar
+- [ ] Campos pré-preenchidos
+- [ ] Validação de credenciais inválidas
+- [ ] Logout e novo login
+
+LEGO:
+- [ ] Visualizar grade corretamente
+- [ ] Cores dos status aparecem
+- [ ] Tooltip ao passar mouse
+- [ ] Clique redireciona para PROJETOS + história aberta
+- [ ] Clique em subtarefa bloqueada não redireciona
+
+Projetos/Sprints:
+- [ ] Expandir/retrair sprints
+- [ ] Expandir/retrair histórias
+- [ ] Criar nova história
+- [ ] Editar história
+- [ ] Deletar história (com validações)
+- [ ] Criar subtarefa
+- [ ] Editar subtarefa
+
+Kanban (Minha Área):
+- [ ] Drag & drop entre colunas
+- [ ] Atualizar progresso %
+- [ ] Bloqueada/Desbloquear
+- [ ] Filtrar por projeto
+
+Cadastro:
+- [ ] CRUD profissionais
+- [ ] CRUD projetos
+- [ ] CRUD sprints
+- [ ] CRUD histórias
+- [ ] CRUD subtarefas
+- [ ] Validações de campos obrigatórios
+
+8.2 Testes de Permissões
+─────────────────────────
+
+- [ ] Admin vê todos os menus
+- [ ] Gestor não vê CADASTRO
+- [ ] Developer só vê MINHA ÁREA com suas tarefas
+- [ ] QA acesso similar ao Developer
+
+8.3 Testes de Regras de Negócio
+────────────────────────────────
+
+- [ ] Não permite criar dependência cíclica
+- [ ] Subtarefa bloqueada não pode ser agendada
+- [ ] Status história muda conforme subtarefas
+- [ ] Sprint muda status automaticamente
+- [ ] Impossível agendar mesma subtarefa 2x
+
+================================================================================
+9. GLOSSÁRIO
+================================================================================
+
+LEGO: Menu de cronograma/grade (Plano de Turno)
+Sprint: Período de 1-4 semanas de desenvolvimento
+História: User Story (funcionalidade para o usuário final)
+Subtarefa: Breakdown de uma história em tarefas técnicas menores
+Turnos: Períodos do dia (Manhã, Tarde, Noite)
+Responsável: Profissional alocado à subtarefa
+Status: Estado atual (planejada, em progresso, bloqueada, concluída)
+Dependência: Prerequisito (subtarefa A depende de B estar concluída)
+Bloqueada: Impedida de avançar (por dependência ou motivo externo)
+Alocação: % de dedicação de um profissional a um projeto
+Kanban: Visualização de workflow em colunas (Aguardando, Dev, Review, etc)
+Perfil de Acesso: Nível de permissão (Admin, Gestor, Dev, QA)
+
+================================================================================
+10. NOTAS IMPORTANTES
+================================================================================
+
+- Todos os dados são persistidos em localStorage (browser storage)
+- Em produção, migrar para banco de dados real (Supabase, Firebase)
+- Implementar autenticação JWT ou OAuth
+- Adicionar criptografia de senhas (bcrypt)
+- Implementar logs de auditoria
+- Considerar soft deletes ao invés de deletar dados
+- Adicionar paginação em listas grandes
+- Considerar cache para melhor performance
+- Implementar notificações em tempo real (WebSocket)
+- Adicionar exportação de relatórios (PDF, Excel)
+- Criar mobile app nativo para maior adoção
+- Integrar com Jira/Azure DevOps (opcional)
+
+================================================================================
+FIM DA DOCUMENTAÇÃO
+================================================================================
+
+Versão: 1.0
+Data: 24/08/2026
+Próxima Revisão: 01/10/2026

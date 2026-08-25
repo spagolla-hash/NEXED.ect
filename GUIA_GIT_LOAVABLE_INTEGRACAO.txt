@@ -1,0 +1,616 @@
+================================================================================
+            GUIA PRÁTICO: GIT + LOAVABLE + DOCUMENTAÇÃO
+           Como Integrar Seu Projeto HTML no Loavable
+================================================================================
+
+DATA: 24/08/2026
+VERSÃO: 1.0
+STATUS: Pronto para Uso
+
+================================================================================
+CENÁRIO ATUAL
+================================================================================
+
+✅ Você tem:
+1. Arquivo HTML (lwp73-setproject.html) no Git
+2. Arquivo de Documentação (NEXED_ECT_DOCUMENTACAO.txt)
+3. Acesso ao Loavable
+
+Objetivo: Conectar tudo para desenvolvimento e deploy
+
+================================================================================
+PASSO 1: PREPARAR SEU REPOSITÓRIO GIT
+================================================================================
+
+1.1 Verificar a Estrutura Atual
+──────────────────────────────────
+
+Seu repositório deve ter essa estrutura:
+
+nexed-ect/
+├── lwp73-setproject.html      ← Seu arquivo HTML principal
+├── LWP73_TECH.png             ← Logo da marca
+├── NEXED_ECT_DOCUMENTACAO.txt  ← Documentação
+├── README.md                   ← (criar se não tiver)
+├── package.json                ← (criar - veja abaixo)
+└── .gitignore                  ← (criar se não tiver)
+
+1.2 Criar package.json
+───────────────────────
+
+Na raiz do repositório, crie arquivo "package.json":
+
+{
+  "name": "nexed-ect",
+  "version": "1.0.0",
+  "description": "NEXED.ect - Cronograma Inteligente de Projetos",
+  "main": "lwp73-setproject.html",
+  "scripts": {
+    "start": "npm run dev",
+    "dev": "http-server -p 8000",
+    "build": "npm run build:html",
+    "build:html": "echo 'HTML é um arquivo estático'",
+    "deploy": "vercel"
+  },
+  "keywords": ["gestão", "projetos", "cronograma"],
+  "author": "Seu Nome",
+  "license": "MIT",
+  "devDependencies": {
+    "http-server": "^14.1.1",
+    "vercel": "^latest"
+  }
+}
+
+1.3 Criar .gitignore
+──────────────────────
+
+Crie arquivo ".gitignore" na raiz:
+
+node_modules/
+.env
+.env.local
+dist/
+build/
+.vercel/
+*.log
+.DS_Store
+.vscode/
+.idea/
+
+1.4 Criar README.md
+────────────────────
+
+Crie arquivo "README.md":
+
+# NEXED.ECT - Cronograma Inteligente
+
+Sistema inteligente de gestão de projetos e cronogramas.
+
+## 🚀 Quick Start
+
+### Desenvolvimento Local
+```bash
+npm install
+npm start
+# Abra http://localhost:8000
+```
+
+### Credenciais Padrão
+- Email: spagolla@gmail.com
+- Senha: teste123
+
+## 📚 Documentação
+
+Veja `NEXED_ECT_DOCUMENTACAO.txt` para documentação completa.
+
+## 🔧 Estrutura
+
+- `lwp73-setproject.html` - Aplicação principal
+- `LWP73_TECH.png` - Logo
+- `NEXED_ECT_DOCUMENTACAO.txt` - Documentação completa
+
+## 📦 Deploy
+
+Deploy automático via Vercel/Loavable ao fazer push.
+
+---
+
+1.5 Fazer Commit e Push
+─────────────────────────
+
+No terminal:
+
+```bash
+git add .
+git commit -m "Adicionar package.json, .gitignore e README"
+git push origin main
+```
+
+================================================================================
+PASSO 2: CONECTAR GIT AO LOAVABLE
+================================================================================
+
+2.1 Acessar Loavable
+─────────────────────
+
+1. Vá a https://loavable.ai
+2. Faça login com sua conta
+3. Clique em "New Project" ou "+ Create"
+
+2.2 Conectar ao Git
+────────────────────
+
+1. Na tela de criação, escolha a opção:
+   - "Import from Git" OU
+   - "Connect Repository"
+
+2. Será pedido para:
+   - Autorizar Loavable no GitHub/GitLab
+   - Selecionar seu repositório "nexed-ect"
+   - Escolher branch (main/master)
+
+3. Loavable automaticamente:
+   - Clona o repositório
+   - Detecta package.json
+   - Instala dependências
+   - Cria preview da aplicação
+
+2.3 Configurar Loavable
+────────────────────────
+
+1. Após importar, Loavable oferece:
+   - Preview da aplicação
+   - Editor de código (se quiser editar)
+   - Environment variables
+   - Deploy settings
+
+2. Configure:
+   - Ambiente: Development
+   - Linguagem: HTML/CSS/JavaScript
+   - Build command: (deixe vazio, é arquivo estático)
+
+2.4 Testar Preview
+────────────────────
+
+1. Loavable fornece URL de preview
+2. Clique em "Open Preview"
+3. Verifique:
+   - ✅ Página carrega
+   - ✅ Login funciona (auto-login)
+   - ✅ Logo aparece
+   - ✅ Todos os menus aparecem
+
+================================================================================
+PASSO 3: USAR A DOCUMENTAÇÃO COM LOAVABLE
+================================================================================
+
+3.1 Organizar a Documentação no Git
+─────────────────────────────────────
+
+Crie pasta "docs/" no repositório:
+
+nexed-ect/
+├── lwp73-setproject.html
+├── LWP73_TECH.png
+├── package.json
+├── README.md
+├── .gitignore
+└── docs/
+    ├── NEXED_ECT_DOCUMENTACAO.txt
+    ├── GUIA_SETUP.txt
+    ├── ARQUITETURA.txt
+    ├── API_ENDPOINTS.txt
+    └── TROUBLESHOOTING.txt
+
+3.2 Vincular Documentação no Loavable
+──────────────────────────────────────
+
+1. Em Loavable, procure por:
+   - "Documentation" ou "Docs"
+   - Clique em "+ Add Documentation"
+
+2. Opções:
+   a) Upload do arquivo TXT
+   b) Criar diretamente no Loavable
+   c) Linked from Repo (automaticamente lê docs/ do git)
+
+3. Loavable indexa a documentação:
+   - Permite busca dentro da aplicação
+   - Acessível para devs e testers
+   - Atualiza quando faz push ao git
+
+3.3 Referência Cruzada
+──────────────────────
+
+Na documentação (TXT), referencie Loavable:
+
+Exemplo - Adicionar ao NEXED_ECT_DOCUMENTACAO.txt:
+
+---
+## VER NO LOAVABLE
+
+Este projeto está hospedado no Loavable:
+- URL: https://loavable.ai/app/seu-usuario/nexed-ect
+- Branch: main
+- Atualiza automaticamente ao fazer push
+
+Para editar arquivos:
+1. Edite localmente em seu editor (VSCode)
+2. Faça commit e push ao Git
+3. Loavable deteta mudanças e redeployed automaticamente
+---
+
+================================================================================
+PASSO 4: FLUXO DE DESENVOLVIMENTO COMPLETO
+================================================================================
+
+4.1 Seu Fluxo de Trabalho Será:
+─────────────────────────────────
+
+[1] DESENVOLVIMENTO LOCAL
+──────────────────────────
+1. Edita arquivo HTML localmente em VSCode
+2. Testa no navegador (npm start)
+3. Faz ajustes
+4. Todos os testes passam
+
+[2] CONTROLE DE VERSÃO (GIT)
+──────────────────────────────
+5. git add .
+6. git commit -m "Descrição da mudança"
+7. git push origin main
+
+[3] DEPLOYMENT AUTOMÁTICO (LOAVABLE)
+──────────────────────────────────────
+8. Loavable detecta novo commit
+9. Executa build automático
+10. Deploy para preview URL
+11. Aplicação ao vivo em segundos
+
+[4] MONITORAMENTO & DOCUMENTAÇÃO
+──────────────────────────────────
+12. Verifica funcionamento na preview
+13. Atualiza documentação (TXT) se necessário
+14. Novo commit com doc atualizada
+15. Volta ao passo [1]
+
+Diagrama:
+
+┌─────────────────┐
+│   Editar HTML   │
+│   (Local)       │
+└────────┬────────┘
+         │
+         ▼
+┌─────────────────┐
+│  Testar Local   │
+│ (npm start)     │
+└────────┬────────┘
+         │
+         ▼
+┌─────────────────┐
+│  Git Commit     │
+│  & Push         │
+└────────┬────────┘
+         │
+         ▼
+┌─────────────────┐
+│  Loavable       │
+│  Auto Deploy    │
+└────────┬────────┘
+         │
+         ▼
+┌─────────────────┐
+│  Preview URL    │
+│  Ao Vivo        │
+└─────────────────┘
+
+================================================================================
+PASSO 5: CONFIGURAÇÕES ESPECÍFICAS DO LOAVABLE
+================================================================================
+
+5.1 Variáveis de Ambiente (Environment Variables)
+───────────────────────────────────────────────────
+
+Se seu HTML precisar de variáveis:
+
+1. Em Loavable, vá a:
+   Settings → Environment Variables
+
+2. Adicione:
+
+VITE_APP_NAME=NEXED ECT
+VITE_APP_VERSION=1.0.0
+VITE_API_URL=https://api.sua-url.com (opcional)
+
+3. Para acessar no HTML:
+   // Será injetado como window.env.VITE_APP_NAME
+   const appName = window.env?.VITE_APP_NAME || 'NEXED.ect';
+
+5.2 Configurar Domínio Customizado
+─────────────────────────────────────
+
+1. Em Loavable, vá a:
+   Settings → Domains
+
+2. Clique em "+ Add Domain"
+
+3. Digite seu domínio (ex: nexed-ect.seu-dominio.com)
+
+4. Loavable fornece instruções DNS:
+   - Crie CNAME apontando para Loavable
+
+5. Aguarde validação (5-30 min)
+
+6. Seu app estará em: https://nexed-ect.seu-dominio.com
+
+5.3 Configurar Webhooks (Automação)
+─────────────────────────────────────
+
+1. Em Loavable, vá a:
+   Settings → Webhooks
+
+2. Clique em "+ New Webhook"
+
+3. Configure:
+   - URL: https://seu-servidor.com/webhook
+   - Eventos: 'deployment.completed', 'push.received'
+   - Método: POST
+
+4. Seu servidor receberá notificações automáticas
+
+5.4 Analytics & Logs
+──────────────────────
+
+1. Loavable oferece:
+   - Logs em tempo real
+   - Analytics de uso
+   - Erros e exceções
+
+2. Acesse em:
+   Dashboard → Logs
+   Dashboard → Analytics
+
+================================================================================
+PASSO 6: WORKFLOW ESPECÍFICO PARA CADA TIPO DE MUDANÇA
+================================================================================
+
+6.1 Mudança de Funcionalidade
+──────────────────────────────
+
+Você quer: Adicionar novo menu, alterar funcionalidade, novo fluxo
+
+1. Localmente:
+   - Edite lwp73-setproject.html
+   - Adicione a nova funcionalidade em JavaScript
+   - Teste em npm start
+
+2. Atualize documentação:
+   - Edite NEXED_ECT_DOCUMENTACAO.txt
+   - Adicione nova seção ou fluxo
+
+3. Commit:
+   git commit -m "feat: Novo menu de Relatórios
+
+   - Adiciona menu de relatórios em PDF
+   - Permite filtro por período
+   - Exporta dados de projetos/sprints"
+
+4. Push:
+   git push origin main
+
+5. Aguarde Loavable deployer
+
+6. Teste em preview
+
+6.2 Mudança de Design/CSS
+──────────────────────────
+
+Você quer: Alterar cores, layout, fontes
+
+1. Localmente:
+   - Edite CSS dentro da tag <style> do HTML
+   - Use F12 para testar em tempo real
+
+2. Commit:
+   git commit -m "style: Atualizar cores do cabeçalho"
+
+3. Push e teste
+
+6.3 Mudança de Dados (Seed)
+──────────────────────────────
+
+Você quer: Adicionar novos clientes, profissionais, projetos
+
+1. Localmente:
+   - Edite a seção DB.clientes, DB.profissionais, etc
+   - No arquivo HTML, procure por: DB.clientes = [
+
+2. Commit:
+   git commit -m "data: Adicionar novo cliente XYZ"
+
+3. Push
+
+6.4 Atualizar Documentação Só
+──────────────────────────────
+
+Você quer: Adicionar instrução, esclarecer fluxo, corrigir erro
+
+1. Edite: NEXED_ECT_DOCUMENTACAO.txt
+
+2. Commit:
+   git commit -m "docs: Adicionar instruções de integração com Supabase"
+
+3. Push
+
+4. Loavable atualiza documentação (se tiver linked)
+
+================================================================================
+PASSO 7: TROUBLESHOOTING & FAQ
+================================================================================
+
+P: Fiz push, mas Loavable não atualizou
+R: 
+1. Loavable pode levar 30-60 segundos
+2. Atualize a página preview (F5)
+3. Verifique Logs em Loavable (Dashboard → Logs)
+4. Se errr, veja mensagem de erro
+5. Rollback: git revert último commit, push novamente
+
+P: Como testar HTML sem Loavable?
+R:
+1. npm install -g http-server
+2. http-server -p 8000
+3. Abra http://localhost:8000/lwp73-setproject.html
+
+P: Preciso editar em produção urgente
+R:
+1. Não recomendado! Mas se necessário:
+2. Em Loavable, vá a: Code Editor
+3. Edite diretamente no editor web (não é persistente no git)
+4. Depois faça mudança localmente, commit e push
+
+P: Como voltar para uma versão anterior?
+R:
+1. No Git: git log (veja commits)
+2. git checkout <hash-do-commit-anterior>
+3. git push origin main --force (cuidado!)
+4. Loavable automaticamente volta versão
+
+P: Como colaborar em time?
+R:
+1. Cada dev faz clone do repo
+2. Cria branch: git checkout -b feature/nova-funcao
+3. Edita e testa
+4. Faz PR (Pull Request) no GitHub
+5. Code review
+6. Merge na main
+7. Loavable deploy automático
+
+P: Posso acessar BD/Storage do Loavable?
+R:
+1. Seu HTML usa localStorage do browser
+2. Dados são locais do usuário
+3. Se quer sincronizar entre devices:
+   - Integre com Supabase, Firebase, ou seu API
+   - Veja seção "Integração com Supabase" da docs
+
+================================================================================
+PASSO 8: CHECKLIST DE CONFIGURAÇÃO
+================================================================================
+
+Antes de considerar tudo pronto:
+
+✅ Configuração GIT
+  □ Repositório criado e público (ou privado com acesso Loavable)
+  □ package.json configurado
+  □ .gitignore criado
+  □ README.md criado
+  □ Primeiro commit e push feito
+
+✅ Loavable
+  □ Conta criada
+  □ Repositório conectado
+  □ Preview URL funcionando
+  □ Auto-deploy funcionando
+  □ Domínio customizado configurado (opcional)
+
+✅ Documentação
+  □ NEXED_ECT_DOCUMENTACAO.txt no Git
+  □ Indexada no Loavable (se suportado)
+  □ Atualizada e completa
+
+✅ Aplicação
+  □ Logo aparece no header
+  □ Auto-login funciona
+  □ Todos os 7 menus aparecem
+  □ Nenhum erro no console (F12 → Console)
+  □ Responsivo em mobile
+
+✅ Segurança (se for produção)
+  □ Remover credenciais hardcoded
+  □ Implementar autenticação real (OAuth, JWT)
+  □ Usar HTTPS
+  □ Configurar CORS se tiver API externa
+  □ Rate limiting se necessário
+
+================================================================================
+PASSO 9: PRÓXIMOS PASSOS APÓS SETUP
+================================================================================
+
+1. Migração para Banco de Dados Real
+   - Implementar Supabase, Firebase, ou MySQL
+   - Retirar localStorage
+   - Implementar autenticação JWT
+
+2. Mobile App
+   - Criar versão nativa (React Native)
+   - Sincronizar dados com web
+
+3. Integrações
+   - Jira, Azure DevOps (importar histórias)
+   - Slack (notificações)
+   - Email (relatórios)
+
+4. Melhorias UX
+   - Offline mode
+   - Real-time sync
+   - Progressive Web App (PWA)
+
+5. Performance
+   - Minificar JavaScript/CSS
+   - Lazy loading de dados
+   - Caching inteligente
+
+================================================================================
+REFERÊNCIA RÁPIDA DE COMANDOS
+================================================================================
+
+GIT:
+  git clone <url-repo>                    # Clonar
+  git status                               # Ver mudanças
+  git add .                                # Stagear mudanças
+  git commit -m "mensagem"                # Fazer commit
+  git push origin main                    # Enviar
+  git pull origin main                    # Baixar mudanças
+  git log                                  # Ver histórico
+  git revert <hash>                       # Desfazer commit
+
+LOAVABLE (via CLI, se suportado):
+  loavable login                           # Login
+  loavable deploy                          # Deploy manual
+  loavable logs                            # Ver logs
+
+NPM:
+  npm install                              # Instalar deps
+  npm start                                # Rodar localmente
+  npm run build                            # Build (se necessário)
+
+================================================================================
+CONCLUSÃO
+================================================================================
+
+Com essa configuração, você tem:
+
+✅ Desenvolvimento local com controle de versão
+✅ Deploy automático ao fazer push
+✅ Preview URL para testar mudanças
+✅ Documentação centralizada
+✅ Colaboração em time facilitada
+✅ Histórico completo de mudanças
+✅ Integração contínua básica
+
+Qualquer dúvida, consulte:
+1. NEXED_ECT_DOCUMENTACAO.txt (funcionalidades)
+2. Este guia (setup técnico)
+3. Documentação oficial Loavable: https://loavable.ai/docs
+
+Sucesso! 🚀
+
+================================================================================
+FIM DO GUIA
+================================================================================
+
+Versão: 1.0
+Data: 24/08/2026
+Autor: Sistema de Documentação NEXED.ECT
