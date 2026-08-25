@@ -1,0 +1,8 @@
+{
+  "name": "nexed-ect",
+  "version": "1.0.0",
+  "description": "NEXED.ect - Cronograma Inteligente de Projetos",
+  "scripts": {
+    "start": "http-server -p 8000"
+  }
+}
